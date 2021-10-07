@@ -1,55 +1,65 @@
-class TV:
-    def __init__(self, channel, volume):
-        if 0 < channel <= 20:
-            self.__channel = channel
-        else:
-            raise ValueError("Телевизор словил только 20 каналов, выполняю выключение")
-        if 0 <= volume <= 100:
-            self.__volume = volume
-        else:
-            raise ValueError("Телевизор не может поставить такую громкость, выполняю выключение")
 
-    @property
-    def channel(self):
-        return self.__channel
 
-    @channel.setter
-    def channel(self, chan):
-        if 0 < chan <= 20:
-            self.__channel = chan
-        else:
-            print("Телевизор словил только 20 каналов")
 
+
+
+
+
+
+
+
+
+
+
+from random import randrange
+
+class Card:
+    """ 
+        Одна игральная карта 
+        0 - ♠
+        1 - ♣
+        2 - ♥
+        3 - ♦
+    """
     
-    @property
-    def volume(self):
-        return self.__volume
+    RANKS = ["Т", "2", "3", "4", "5", "6", "7", "8", "9", "10", "В", "Д", "K"]
+    SUITS = [u'\u2660', u'\u2663', u'\u2665', u'\u2666'] 
 
-    @volume.setter
-    def volume(self, vol):
-        if 0 <= vol <= 100:
-            self.__volume = vol
-        else:
-            print("Телевизор не может поставить такую громкость")
+    def __init__(self, rank, suit):
+        self.rank = rank
+        self.suit = suit
+    def __str__(self):
+        return Card.RANKS[self.rank - 1] + Card.SUITS[self.suit]
 
-def main():
-    obj = TV(int(input("Канал :")), int(input("Громкость :")))
+players_count = int(input('Сколько игроков играет : '))
+score = [0] * players_count
+for round in range(int(input("Кол-во раундов : "))):
+    players = []
+    for i in range(players_count):
+        players.append(Card(randrange(1, 14), randrange(0, 4)))
 
-    choice = None
-    while choice != "0":
-        print(f"""
-        0 - Выйти,
-        1 - Изменить канал,
-        2 - Изменить громкость
-        Громкость : {obj.volume}
-        Канал : {obj.channel}
-        """)
-        choice = input()
-        if choice == "1":
-            obj.channel = int(input("Канал :"))
-        elif choice == "2":
-            obj.volume = int(input("Громкость :"))
-    
-    print("Пока")
+    winner = []
+    count = 0
+    noone = False
+    for i in range(len(players)):
+        print(f"У игрока {i + 1} выпала карта {str(players[i])}")
+        if count < players[i].rank:
+            count = players[i].rank
+            winner = [i]
+            noone = False
+        elif count == players[i].rank:
+            winner.append(i)
+            noone = True
 
-main()
+    if len(winner) <= 1:
+        print(f"В раунде {round + 1} победил игрок {winner[0] + 1}")
+        score[winner[0]] += 1
+    else:
+        print(f"В раунде {round + 1} ничья")
+    print("")
+
+final = ''
+for i in range(players_count):
+    final += f'У игрока {i + 1} {score[i]} очков \n'
+
+print(final)
